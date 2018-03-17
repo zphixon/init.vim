@@ -1,0 +1,5 @@
+
+# init.vim
+
+my vimrc
+
