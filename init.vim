@@ -92,6 +92,12 @@ set formatoptions-=t
 set textwidth=0 wrapmargin=0
 set tw=0
 set fileformats=unix
+
+"neovide
+let g:neovide_refresh_rate = 144
+let g:neovide_transparency = 0.98
+let g:neovide_cursor_animation_length = 0.08
+let g:neovide_cursor_trail_length = 0.2
 " }}}
 
 " plugins {{{
@@ -105,15 +111,17 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 Plug 'cespare/vim-toml'
 Plug 'tikhomirov/vim-glsl'
+Plug 'gabrielelana/vim-markdown'
 
 " enhancements
-"Plug 'itchyny/lightline.vim'
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'qpkorr/vim-bufkill'
-Plug 'gabrielelana/vim-markdown'
+Plug 'jiangmiao/auto-pairs'
+
+" ui
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -127,6 +135,22 @@ call plug#end()
 " plugin config {{{
 colo base16-gruvbox-dark-soft
 let g:airline_theme='base16_gruvbox_dark_hard'
+let g:ctrlp_match_window='max:35'
+
+" <> doesn't work in rust for some reason :(
+let g:AutoPairs = {
+            \ '<':'>',
+            \ '<<':'',
+            \ '(':')',
+            \ '[':']',
+            \ '{':'}',
+            \ "'":"'",
+            \ '"':'"',
+            \ "`":"`",
+            \ '```':'```',
+            \ '"""':'"""',
+            \ "'''":"'''",
+            \ }
 
 " coc.nvim settings
 " it complains about my nvim version for some reason
