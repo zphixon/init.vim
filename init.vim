@@ -4,9 +4,10 @@
 
 " maps {{{
 
+filetype plugin on
 " let nvim use python
-let g:python_host_prog='C:/Python27/python.exe'
-let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python36-32/python.exe'
+"let g:python_host_prog='C:/Python27/python.exe'
+let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python37/python.exe'
 
 " turn off bells
 set noerrorbells visualbell t_vb=
@@ -23,29 +24,35 @@ fu! CursorColumn()
 endfu
 map <silent> <M-p> :call CursorColumn()<cr>
 
+nmap <silent> <F5> :checktime<cr>
+
+inoremap jk <Esc>
+inoremap slef self
+inoremap sle.f self.
+inoremap sel.f self.
+
 " key mappings
 let mapleader=" "
 let maplocalleader="'"
 nmap <silent> <C-l> :noh<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :so $MYVIMRC<cr>
-nnoremap <leader>sf :so %<cr>
 nnoremap <leader>fs :w<cr>
+nnoremap <leader>sf :w<cr>
 nnoremap <leader>wh <C-w>h
 nnoremap <leader>wj <C-w>j
 nnoremap <leader>wk <C-w>k
 nnoremap <leader>wl <C-w>l
 nnoremap <leader>w/ :vne<cr>
+nnoremap <leader>wd :q<cr>
 nnoremap <leader>wn :new<cr>
 nnoremap <leader>ch :noh<cr>
-nnoremap <leader>bd :bd<cr>
-nnoremap <leader>bb :FufBuffer<cr>
-nnoremap <leader>ff :FufFile<cr>
-
+nnoremap <leader>bd :BD<cr>
+nnoremap <leader>bb :CtrlPBuffer<cr>
+nnoremap <leader>ff :CtrlP<cr>
 " }}}
 
 " configs {{{
-
 " don't create junk files
 set noswapfile
 
@@ -84,255 +91,103 @@ set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
 set formatoptions-=t
 set textwidth=0 wrapmargin=0
 set tw=0
-set fileformat=unix
-set fileformats=unix,dos
-
+set fileformats=unix
 " }}}
 
 " plugins {{{
 call plug#begin('C:\Users\Zack\AppData\Local\nvim\plugged')
 
 " completion
-"Plug 'scrooloose/syntastic'
-"Plug 'racer-rust/vim-racer'
-"Plug 'junegunn/fzf'
-"Plug 'roxma/nvim-cm-racer'
-Plug 'autozimu/LanguageClient-neovim', {
-            \ 'branch': 'next',
-            \ 'do': './install.ps1',
-            \ }
-"Plug 'Valloric/YouCompleteMe'
-Plug 'roxma/nvim-completion-manager'
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neco-vim'
-"Plug 'sebastianmarkow/deoplete-rust'
-"Plug 'zchee/deoplete-go', {'build:': 'make'}
-"Plug 'zchee/deoplete-jedi'
-"Plug 'zchee/deoplete-clang'
-"Plug 'honza/vim-snippets'
-"Plug 'SirVer/ultisnips'
+Plug 'junegunn/fzf'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " highlighting
 Plug 'rust-lang/rust.vim'
-"Plug 'benbrunton/vl.vim'
-"Plug 'daveyarwood/vim-alda'
-"Plug 'vim-scripts/arnoldc.vim'
 Plug 'cespare/vim-toml'
-"Plug 'scooter-dangle/vim-factor'
+Plug 'tikhomirov/vim-glsl'
 
 " enhancements
-Plug 'itchyny/lightline.vim'
-Plug 'ernstki/FuzzyFinder'
-Plug 'vim-scripts/L9'
-"Plug 'vim-scripts/LycosaExplorer'
-"Plug 'vim-scripts/incbufswitch.vim'
-"Plug 'jlanzarotta/bufexplorer'
-"Plug 'jceb/vim-orgmode'
-"Plug 'tpope/vim-abolish'
-"Plug 'tpope/vim-speeddating'
-"Plug 'tpope/vim-vinegar'
+"Plug 'itchyny/lightline.vim'
+Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-"Plug 'reedes/vim-wordy'
-"Plug 'terryma/vim-smooth-scroll'
-"Plug 'mileszs/ack.vim'
-"Plug 'vimwiki/vimwiki'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'qpkorr/vim-bufkill'
+Plug 'gabrielelana/vim-markdown'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'airblade/vim-gitgutter'
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
-Plug 'justinmk/vim-sneak'
-"Plug 'KabbAmine/yowish.vim'
-"Plug 'flazz/vim-colorschemes'
-"Plug '0ax1/lxvc'
-"Plug 'whatyouhide/vim-gotham'
-"Plug 'FuDesign2008/randomColor.vim'
-
-" etc
-"Plug 'xolox/vim-lua-inspect'
-"Plug 'rhysd/nyaovim-markdown-preview'
-"Plug 'rhysd/nyaovim-mini-browser'
 call plug#end()
-
 " }}}
 
 " plugin config {{{
+colo base16-gruvbox-dark-soft
+let g:airline_theme='base16_gruvbox_dark_hard'
 
-" language client settings
+" coc.nvim settings
+" it complains about my nvim version for some reason
+let g:coc_disable_startup_warning=1
+
 set hidden
-let g:LanguageClient_serverCommands = {
-            \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-            \ }
-let g:LanguageClient_diagnosticsDisplay = {
-            \     1: {
-            \         "name": "Error",
-            \         "texthl": "ALEError",
-            \         "signText": "x",
-            \         "signTexthl": "ALEErrorSign",
-            \     },
-            \     2: {
-            \         "name": "Warning",
-            \         "texthl": "ALEWarning",
-            \         "signText": "!",
-            \         "signTexthl": "ALEWarningSign",
-            \     },
-            \     3: {
-            \         "name": "Information",
-            \         "texthl": "ALEInfo",
-            \         "signText": "i",
-            \         "signTexthl": "ALEInfoSign",
-            \     },
-            \     4: {
-            \         "name": "Hint",
-            \         "texthl": "ALEInfo",
-            \         "signText": ">",
-            \         "signTexthl": "ALEInfoSign",
-            \     },
-            \ }
+set updatetime=300
+set shortmess+=c
+if has("patch-8.1.1564")
+    set signcolumn=number
+else
+    set signcolumn=yes
+endif
 
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<cr>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<cr>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<cr>
+" tab insert
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-"" ack.vim setup: use rg instead
-"if executable('rg')
-"    let g:ackprg = 'rg --vimgrep'
-"endif
-
-" lightline settigns {{{
-let g:lightline = {
-            \ 'colorscheme': 'wombat',
-            \ 'active': {
-            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
-            \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
-            \ },
-            \ 'component_function': {
-            \   'fugitive': 'LightLineFugitive',
-            \   'filename': 'LightLineFilename',
-            \   'fileformat': 'LightLineFileformat',
-            \   'filetype': 'LightLineFiletype',
-            \   'fileencoding': 'LightLineFileencoding',
-            \   'mode': 'LightLineMode',
-            \   'ctrlpmark': 'CtrlPMark',
-            \ },
-            \ 'component_expand': {
-            \   'syntastic': 'SyntasticStatuslineFlag',
-            \ },
-            \ 'component_type': {
-            \   'syntastic': 'error',
-            \ },
-            \ 'subseparator': { 'left': '|', 'right': '|' }
-            \ }
-
-function! LightLineModified()
-    return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+" dot completion
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col-1]  =~# '\s'
 endfunction
 
-function! LightLineReadonly()
-    return &ft !~? 'help' && &readonly ? 'RO' : ''
-endfunction
+" ctrl-space completion
+inoremap <silent><expr> <c-space> coc#refesh()
 
-function! LightLineFilename()
-    let fname = expand('%:t')
-    return fname == 'ControlP' ? g:lightline.ctrlp_item :
-                \ fname == '__Tagbar__' ? g:lightline.fname :
-                \ fname =~ '__Gundo\|NERD_tree' ? '' :
-                \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-                \ &ft == 'unite' ? unite#get_status_string() :
-                \ &ft == 'vimshell' ? vimshell#get_status_string() :
-                \ ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
-                \ ('' != fname ? fname : '[No Name]') .
-                \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
-endfunction
+if exists('*complete_info')
+    inoremap <expr><cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u<CR>"
+else
+    inoremap <expr><cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
 
-function! LightLineFugitive()
-    try
-        if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-            let mark = ''  " edit here for cool mark
-            let _ = fugitive#head()
-            return strlen(_) ? mark._ : ''
-        endif
-    catch
-    endtry
-    return ''
-endfunction
+" next/prev error messages
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-function! LightLineFileformat()
-    return winwidth(0) > 70 ? &fileformat : ''
-endfunction
+" jump to definition/implementation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-function! LightLineFiletype()
-    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
-endfunction
+" show docs
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-function! LightLineFileencoding()
-    return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
-endfunction
-
-function! LightLineMode()
-    let fname = expand('%:t')
-    return fname == '__Tagbar__' ? 'Tagbar' :
-                \ fname == 'ControlP' ? 'CtrlP' :
-                \ fname == '__Gundo__' ? 'Gundo' :
-                \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-                \ fname =~ 'NERD_tree' ? 'NERDTree' :
-                \ &ft == 'unite' ? 'Unite' :
-                \ &ft == 'vimfiler' ? 'VimFiler' :
-                \ &ft == 'vimshell' ? 'VimShell' :
-                \ winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-function! CtrlPMark()
-    if expand('%:t') =~ 'ControlP'
-        call lightline#link('iR'[g:lightline.ctrlp_regex])
-        return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-                    \ , g:lightline.ctrlp_next], 0)
+function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
     else
-        return ''
+        call CocAction('doHover')
     endif
 endfunction
 
-let g:ctrlp_status_func = {
-            \ 'main': 'CtrlPStatusFunc_1',
-            \ 'prog': 'CtrlPStatusFunc_2',
-            \ }
+" show docs on hover
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
-function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-    let g:lightline.ctrlp_regex = a:regex
-    let g:lightline.ctrlp_prev = a:prev
-    let g:lightline.ctrlp_item = a:item
-    let g:lightline.ctrlp_next = a:next
-    return lightline#statusline(0)
-endfunction
-
-function! CtrlPStatusFunc_2(str)
-    return lightline#statusline(0)
-endfunction
-
-let g:tagbar_status_func = 'TagbarStatusFunc'
-
-function! TagbarStatusFunc(current, sort, fname, ...) abort
-    let g:lightline.fname = a:fname
-    return lightline#statusline(0)
-endfunction
-
-"augroup AutoSyntastic
-"    autocmd!
-"    autocmd BufWritePost *.c,*.cpp call s:syntastic()
-"augroup END
-"function! s:syntastic()
-"    SyntasticCheck
-"    call lightline#update()
-"endfunction
-
-let g:unite_force_overwrite_statusline = 0
-let g:vimfiler_force_overwrite_statusline = 0
-let g:vimshell_force_overwrite_statusline = 0
-
-"}}}
-
-colo base16-gruvbox-dark-soft
-
-filetype plugin on
-
+" rename variable
+nmap <leader>rn <Plug>(coc-rename)
 " }}}
 
