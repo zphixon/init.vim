@@ -3,7 +3,6 @@
 "last updated 2016-03-24
 
 " maps {{{
-
 filetype plugin on
 " let nvim use python
 "let g:python_host_prog='C:/Python27/python.exe'
@@ -68,6 +67,9 @@ cd ~/source
 highlight ColorColumn guibg=LightMagenta
 call matchadd('ColorColumn', '\%81v', 100)
 
+" keep 6 lines above and below the cursor at all times
+set scrolloff=6
+
 " mark folds
 set fdm=marker
 
@@ -95,7 +97,6 @@ set fileformats=unix
 
 "neovide
 let g:neovide_refresh_rate = 144
-let g:neovide_transparency = 0.98
 let g:neovide_cursor_animation_length = 0.08
 let g:neovide_cursor_trail_length = 0.2
 " }}}
@@ -129,12 +130,14 @@ Plug 'airblade/vim-gitgutter'
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
+Plug 'AlessandroYorba/Alduin'
+Plug 'mbbill/desertEx'
 call plug#end()
 " }}}
 
 " plugin config {{{
-colo base16-gruvbox-dark-soft
-let g:airline_theme='base16_gruvbox_dark_hard'
+colo alduin
+let g:airline_theme='alduin'
 let g:ctrlp_match_window='max:35'
 
 " <> doesn't work in rust for some reason :(
@@ -153,9 +156,6 @@ let g:AutoPairs = {
             \ }
 
 " coc.nvim settings
-" it complains about my nvim version for some reason
-let g:coc_disable_startup_warning=1
-
 set hidden
 set updatetime=300
 set shortmess+=c
@@ -197,6 +197,9 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
+" rename variable
+nmap <leader>rn <Plug>(coc-rename)
+
 " show docs
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -210,8 +213,5 @@ endfunction
 
 " show docs on hover
 autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" rename variable
-nmap <leader>rn <Plug>(coc-rename)
 " }}}
 
