@@ -119,7 +119,6 @@ Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'qpkorr/vim-bufkill'
-Plug 'jiangmiao/auto-pairs'
 
 " ui
 Plug 'ctrlpvim/ctrlp.vim'
@@ -136,24 +135,12 @@ call plug#end()
 " }}}
 
 " plugin config {{{
-colo alduin
-let g:airline_theme='alduin'
-let g:ctrlp_match_window='max:35'
+let g:rustfmt_autosave = 1
 
-" <> doesn't work in rust for some reason :(
-let g:AutoPairs = {
-            \ '<':'>',
-            \ '<<':'',
-            \ '(':')',
-            \ '[':']',
-            \ '{':'}',
-            \ "'":"'",
-            \ '"':'"',
-            \ "`":"`",
-            \ '```':'```',
-            \ '"""':'"""',
-            \ "'''":"'''",
-            \ }
+colo base16-gruvbox-dark-hard
+let g:airline_theme='base16_gruvbox_dark_hard'
+
+let g:ctrlp_match_window='max:35'
 
 " coc.nvim settings
 set hidden
@@ -192,10 +179,10 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " jump to definition/implementation
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <leader>gd <Plug>(coc-definition)
+nmap <silent> <leader>gy <Plug>(coc-type-definition)
+nmap <silent> <leader>gi <Plug>(coc-implementation)
+nmap <silent> <leader>gr <Plug>(coc-references)
 
 " rename variable
 nmap <leader>rn <Plug>(coc-rename)
