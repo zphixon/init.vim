@@ -33,11 +33,17 @@ inoremap sel.f self.
 " key mappings
 let mapleader=" "
 let maplocalleader="'"
-nmap <silent> <C-l> :noh<cr>
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>ev :e $MYVIMRC<cr>
 nnoremap <leader>sv :so $MYVIMRC<cr>
+
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>sf :w<cr>
+nnoremap <leader>ch :noh<cr>
+nnoremap <leader>bd :BD<cr>
+
+nnoremap <leader>bb :CtrlPBuffers<cr>
+nnoremap <leader>ff :CtrlP<cr>
+
 nnoremap <leader>wh <C-w>h
 nnoremap <leader>wj <C-w>j
 nnoremap <leader>wk <C-w>k
@@ -45,10 +51,6 @@ nnoremap <leader>wl <C-w>l
 nnoremap <leader>w/ :vne<cr>
 nnoremap <leader>wd :q<cr>
 nnoremap <leader>wn :new<cr>
-nnoremap <leader>ch :noh<cr>
-nnoremap <leader>bd :BD<cr>
-nnoremap <leader>bb :CtrlPBuffer<cr>
-nnoremap <leader>ff :CtrlP<cr>
 " }}}
 
 " configs {{{
@@ -82,9 +84,10 @@ set number
 set relativenumber
 set cursorline
 set nowrap
-set synmaxcol=150
 set nospell
 set noshowmode
+set noequalalways
+set inccommand=nosplit
 
 " 4 spaces, no tab characters
 set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
@@ -162,7 +165,7 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 " dot completion
 function! s:check_back_space() abort
     let col = col('.') - 1
-    return !col || getline('.')[col-1]  =~# '\s'
+    return !col || getline('.')[col-1] =~# '\s'
 endfunction
 
 " ctrl-space completion
@@ -183,8 +186,6 @@ nmap <silent> <leader>gd <Plug>(coc-definition)
 nmap <silent> <leader>gy <Plug>(coc-type-definition)
 nmap <silent> <leader>gi <Plug>(coc-implementation)
 nmap <silent> <leader>gr <Plug>(coc-references)
-
-" rename variable
 nmap <leader>rn <Plug>(coc-rename)
 
 " show docs
