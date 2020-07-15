@@ -4,9 +4,10 @@
 
 " maps {{{
 filetype plugin on
-" let nvim use python
-"let g:python_host_prog='C:/Python27/python.exe'
-let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python37/python.exe'
+
+if has('win32')
+    let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python37/python.exe'
+endif
 
 " turn off bells
 set noerrorbells visualbell t_vb=
@@ -26,11 +27,13 @@ map <silent> <M-p> :call CursorColumn()<cr>
 nmap <silent> <F5> :checktime<cr>
 
 inoremap jk <Esc>
-inoremap slef self
+iabbrev slef self
 inoremap sle.f self.
 inoremap sel.f self.
 
-" key mappings
+tmap jk <C-\><C-n>
+tmap <Esc> <C-\><C-n>
+
 let mapleader=" "
 let maplocalleader="'"
 nnoremap <leader>ev :e $MYVIMRC<cr>
@@ -41,7 +44,7 @@ nnoremap <leader>sf :w<cr>
 nnoremap <leader>ch :noh<cr>
 nnoremap <leader>bd :BD<cr>
 
-nnoremap <leader>bb :CtrlPBuffers<cr>
+nnoremap <leader>bb :CtrlPBuffer<cr>
 nnoremap <leader>ff :CtrlP<cr>
 
 nnoremap <leader>wh <C-w>h
@@ -54,8 +57,6 @@ nnoremap <leader>wn :new<cr>
 " }}}
 
 " configs {{{
-" don't create junk files
-set noswapfile
 
 " automatically read changed files
 set autoread
@@ -63,7 +64,9 @@ set updatetime=1000
 au CursorHold,CursorHoldI * checktime
 
 " start in source folder
-cd ~/source
+if has('win32')
+    cd ~/source
+endif
 
 " highlight 80th column
 highlight ColorColumn guibg=LightMagenta
@@ -88,6 +91,9 @@ set nospell
 set noshowmode
 set noequalalways
 set inccommand=nosplit
+set tgc
+set mouse=n
+syntax on
 
 " 4 spaces, no tab characters
 set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
@@ -105,17 +111,28 @@ let g:neovide_cursor_trail_length = 0.2
 " }}}
 
 " plugins {{{
-call plug#begin('C:\Users\Zack\AppData\Local\nvim\plugged')
+" load plugin from local directory
+fu s:local_plug(name) abort
+    let loc = '~/source/' . a:name
+    if isdirectory(expand(loc))
+        execute "Plug '" . loc . "'"
+    else
+        echoerr 'directory ' . loc . ' does not exist'
+    endif
+endfu
+
+if has('win32')
+    call plug#begin('C:\Users\Zack\AppData\Local\nvim\plugged')
+else
+    call plug#begin('~/.config/nvim/plugged')
+endif
 
 " completion
 Plug 'junegunn/fzf'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " highlighting
-Plug 'rust-lang/rust.vim'
-Plug 'cespare/vim-toml'
-Plug 'tikhomirov/vim-glsl'
-Plug 'gabrielelana/vim-markdown'
+Plug 'sheerun/vim-polyglot'
 
 " enhancements
 Plug 'justinmk/vim-sneak'
@@ -126,26 +143,29 @@ Plug 'qpkorr/vim-bufkill'
 " ui
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
+Plug 'itchyny/lightline.vim'
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
 Plug 'AlessandroYorba/Alduin'
 Plug 'mbbill/desertEx'
+Plug 'sainnhe/sonokai'
+Plug 'sainnhe/edge'
+Plug 'sainnhe/gruvbox-material'
 call plug#end()
 " }}}
 
 " plugin config {{{
 let g:rustfmt_autosave = 1
 
-colo base16-gruvbox-dark-hard
-let g:airline_theme='base16_gruvbox_dark_hard'
+let g:gruvbox_material_background = 'medium'
+set background=dark
+colo gruvbox-material
 
 let g:ctrlp_match_window='max:35'
 
-" coc.nvim settings
+" coc.nvim settings {{{
 set hidden
 set updatetime=300
 set shortmess+=c
@@ -162,14 +182,14 @@ inoremap <silent><expr> <TAB>
             \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-" dot completion
+" true if there's space behind the cursor
 function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col-1] =~# '\s'
 endfunction
 
 " ctrl-space completion
-inoremap <silent><expr> <c-space> coc#refesh()
+inoremap <silent><expr> <c-space> coc#refresh()
 
 if exists('*complete_info')
     inoremap <expr><cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u<CR>"
@@ -201,5 +221,29 @@ endfunction
 
 " show docs on hover
 autocmd CursorHold * silent call CocActionAsync('highlight')
+" }}}
+
+" lightline w/ coc.nvim integration {{{
+let g:lightline = {
+            \ 'colorscheme': 'gruvbox_material',
+            \ 'active': {
+            \   'left': [
+            \     ['mode', 'paste'],
+            \     ['filename', 'readonly', 'modified', 'cocstatus']
+            \   ],
+            \ },
+            \ 'component_function': {
+            \   'cocstatus': 'coc#status'
+            \ }
+            \ }
+" }}}
+" }}}
+
+" use tabs in gdscript3 files {{{
+augroup GodotScriptTabs
+    au!
+    au FileType gdscript3 setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+    au FileType gdscript3 setlocal nolist
+augroup END
 " }}}
 
