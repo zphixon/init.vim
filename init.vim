@@ -3,16 +3,6 @@
 "last updated 2016-03-24
 
 " maps {{{
-filetype plugin on
-
-if has('win32')
-    let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python37/python.exe'
-endif
-
-" turn off bells
-set noerrorbells visualbell t_vb=
-autocmd GUIEnter * set visualbell t_vb=
-
 " toggle cursor column
 set nocuc
 fu! CursorColumn()
@@ -57,6 +47,16 @@ nnoremap <leader>wn :new<cr>
 " }}}
 
 " configs {{{
+
+filetype plugin on
+
+if has('win32')
+    let g:python3_host_prog='C:/Users/Zack/AppData/Local/Programs/Python/Python37/python.exe'
+endif
+
+" turn off bells
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
 
 " automatically read changed files
 set autoread
@@ -129,7 +129,14 @@ endif
 
 " completion
 Plug 'junegunn/fzf'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+if has('nvim-0.5.0')
+    Plug 'neovim/nvim-lsp'
+    Plug 'nvim-lua/completion-nvim'
+    Plug 'nvim-lua/diagnostic-nvim'
+else
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 
 " highlighting
 Plug 'sheerun/vim-polyglot'
@@ -165,78 +172,147 @@ colo gruvbox-material
 
 let g:ctrlp_match_window='max:35'
 
-" coc.nvim settings {{{
-set hidden
-set updatetime=300
-set shortmess+=c
-if has("patch-8.1.1564")
-    set signcolumn=number
-else
-    set signcolumn=yes
-endif
-
-" tab insert
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" true if there's space behind the cursor
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col-1] =~# '\s'
-endfunction
-
-" ctrl-space completion
-inoremap <silent><expr> <c-space> coc#refresh()
-
-if exists('*complete_info')
-    inoremap <expr><cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u<CR>"
-else
-    inoremap <expr><cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" next/prev error messages
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" jump to definition/implementation
-nmap <silent> <leader>gd <Plug>(coc-definition)
-nmap <silent> <leader>gy <Plug>(coc-type-definition)
-nmap <silent> <leader>gi <Plug>(coc-implementation)
-nmap <silent> <leader>gr <Plug>(coc-references)
-nmap <leader>rn <Plug>(coc-rename)
-
-" show docs
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-        execute 'h '.expand('<cword>')
+" this is shit
+function LspStatus() abort
+    if luaeval('vim.tbl_isempty(vim.lsp.buf_get_clients())')
+        return ''
     else
-        call CocAction('doHover')
+        lua LSP_NAME = ""; for k,v in pairs(vim.lsp.buf_get_clients()) do
+                    \ LSP_NAME = v.name
+                    \ end
+        if luaeval('vim.lsp.buf.server_ready()')
+            return luaeval('LSP_NAME')
+        else
+            return luaeval('"loading " .. LSP_NAME .. "..."')
+        endif
     endif
 endfunction
 
-" show docs on hover
-autocmd CursorHold * silent call CocActionAsync('highlight')
-" }}}
+if has('nvim-0.5.0')
+    " nvim-lsp {{{
+    set completeopt=menuone,noinsert,noselect
+    set shortmess+=c
 
-" lightline w/ coc.nvim integration {{{
-let g:lightline = {
-            \ 'colorscheme': 'gruvbox_material',
-            \ 'active': {
-            \   'left': [
-            \     ['mode', 'paste'],
-            \     ['filename', 'readonly', 'modified', 'cocstatus']
-            \   ],
-            \ },
-            \ 'component_function': {
-            \   'cocstatus': 'coc#status'
-            \ }
-            \ }
-" }}}
+    lua require('nvim_lsp').rust_analyzer.setup({
+                \ on_attach = function(...)
+                \     require('completion').on_attach(...)
+                \     require('diagnostic').on_attach(...)
+                \ end
+                \ })
+    "lua require('nvim_lsp').vimls.setup({
+    "            \ on_attach = require('completion').on_attach
+    "            \ })
+
+    function! s:show_documentation()
+        if (index(['vim','help'], &filetype) >= 0)
+            execute 'h '.expand('<cword>')
+        else
+            lua vim.lsp.buf.hover()
+        endif
+    endfunction
+
+    "nnoremap gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+    "nnoremap <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+    nnoremap gd    <cmd>lua vim.lsp.buf.definition()<CR>
+    nnoremap K     <cmd>call <SID>show_documentation()<CR>
+    nnoremap gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+    nnoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+    nnoremap 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+    nnoremap gr    <cmd>lua vim.lsp.buf.references()<CR>
+    nnoremap g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+    nnoremap gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+    nnoremap ]g    <cmd>NextDiagnostic<CR>
+    nnoremap [g    <cmd>PrevDiagnostic<CR>
+
+    let g:completion_sorting = 'none'
+    autocmd FileType rust let g:completion_trigger_characters=['.', '::']
+
+    let g:diagnostic_enable_virtual_text=1
+
+    let g:lightline = {
+                \ 'colorscheme': 'gruvbox_material',
+                \ 'active': {
+                \   'left': [
+                \     ['mode', 'paste'],
+                \     ['filename', 'readonly', 'modified', 'lsp-status']
+                \   ],
+                \ },
+                \ 'component_function': {
+                \   'lsp-status': 'LspStatus'
+                \ }
+                \ }
+    " }}}
+else
+    " coc.nvim {{{
+    set hidden
+    set updatetime=300
+    set shortmess+=c
+    if has("patch-8.1.1564")
+        set signcolumn=number
+    else
+        set signcolumn=yes
+    endif
+
+    " tab insert
+    inoremap <silent><expr> <TAB>
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ coc#refresh()
+    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+    " true if there's space behind the cursor
+    function! s:check_back_space() abort
+        let col = col('.') - 1
+        return !col || getline('.')[col-1] =~# '\s'
+    endfunction
+
+    " ctrl-space completion
+    inoremap <silent><expr> <c-space> coc#refresh()
+
+    if exists('*complete_info')
+        inoremap <expr><cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u<CR>"
+    else
+        inoremap <expr><cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+    endif
+
+    " next/prev error messages
+    nmap <silent> [g <Plug>(coc-diagnostic-prev)
+    nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+    " jump to definition/implementation
+    nmap <silent> <leader>gd <Plug>(coc-definition)
+    nmap <silent> <leader>gy <Plug>(coc-type-definition)
+    nmap <silent> <leader>gi <Plug>(coc-implementation)
+    nmap <silent> <leader>gr <Plug>(coc-references)
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " show docs
+    nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+    function! s:show_documentation()
+        if (index(['vim','help'], &filetype) >= 0)
+            execute 'h '.expand('<cword>')
+        else
+            call CocAction('doHover')
+        endif
+    endfunction
+
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+
+    let g:lightline = {
+                \ 'colorscheme': 'gruvbox_material',
+                \ 'active': {
+                \   'left': [
+                \     ['mode', 'paste'],
+                \     ['filename', 'readonly', 'modified', 'cocstatus']
+                \   ],
+                \ },
+                \ 'component_function': {
+                \   'cocstatus': 'coc#status'
+                \ }
+                \ }
+    " }}}
+endif
 " }}}
 
 " use tabs in gdscript3 files {{{
