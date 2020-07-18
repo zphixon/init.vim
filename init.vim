@@ -27,7 +27,7 @@ tmap <Esc> <C-\><C-n>
 let mapleader=" "
 let maplocalleader="'"
 nnoremap <leader>ev :e $MYVIMRC<cr>
-nnoremap <leader>sv :so $MYVIMRC<cr>
+nnoremap <leader>sv :so %<cr>
 
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>sf :w<cr>
@@ -151,7 +151,7 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'itchyny/lightline.vim'
+call s:local_plug('just-a-status-line')
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
@@ -193,15 +193,14 @@ if has('nvim-0.5.0')
     set completeopt=menuone,noinsert,noselect
     set shortmess+=c
 
-    lua require('nvim_lsp').rust_analyzer.setup({
-                \ on_attach = function(...)
-                \     require('completion').on_attach(...)
-                \     require('diagnostic').on_attach(...)
+    lua
+                \ function my_on_attach()
+                \     require("completion").on_attach()
+                \     require("diagnostic").on_attach()
                 \ end
+                \ require("nvim_lsp").rust_analyzer.setup({
+                \     on_attach = my_on_attach
                 \ })
-    "lua require('nvim_lsp').vimls.setup({
-    "            \ on_attach = require('completion').on_attach
-    "            \ })
 
     function! s:show_documentation()
         if (index(['vim','help'], &filetype) >= 0)
@@ -320,6 +319,14 @@ augroup GodotScriptTabs
     au!
     au FileType gdscript3 setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
     au FileType gdscript3 setlocal nolist
+augroup END
+" }}}
+
+" normal lua/html/whatever indenting {{{
+augroup FuckingChrist
+    au!
+    au FileType lua setlocal ts=2 sw=2 sts=2 et
+    au FileType html setlocal ts=2 sw=2 sts=2 et
 augroup END
 " }}}
 
