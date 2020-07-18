@@ -227,19 +227,6 @@ if has('nvim-0.5.0')
     autocmd FileType rust let g:completion_trigger_characters=['.', '::']
 
     let g:diagnostic_enable_virtual_text=1
-
-    let g:lightline = {
-                \ 'colorscheme': 'gruvbox_material',
-                \ 'active': {
-                \   'left': [
-                \     ['mode', 'paste'],
-                \     ['filename', 'readonly', 'modified', 'lsp-status']
-                \   ],
-                \ },
-                \ 'component_function': {
-                \   'lsp-status': 'LspStatus'
-                \ }
-                \ }
     " }}}
 else
     " coc.nvim {{{
@@ -312,6 +299,45 @@ else
                 \ }
     " }}}
 endif
+
+" jasl {{{
+fu MyHighlight() abort
+    if exists('*gruvbox_material#get_configuration')
+        let g:gc = gruvbox_material#get_configuration()
+        let g:gp = gruvbox_material#get_palette(g:gc.background, g:gc.palette)
+        exe 'hi JaslNormal   guifg=' . g:gp.blue[0]   . ' guibg=#3a3735'
+        exe 'hi JaslVisual   guifg=' . g:gp.green[0]  . ' guibg=#3a3735'
+        exe 'hi JaslInsert   guifg=' . g:gp.purple[0] . ' guibg=#3a3735'
+        exe 'hi JaslReplace  guifg=' . g:gp.red[0]    . ' guibg=#3a3735'
+        exe 'hi JaslCommand  guifg=' . g:gp.yellow[0] . ' guibg=#3a3735'
+        exe 'hi JaslTerminal guifg=' . g:gp.aqua[0]   . ' guibg=#3a3735'
+        hi link JaslNormalOpPending        JaslNormal
+        hi link JaslNormalOpPendingChar    JaslNormal
+        hi link JaslNormalOpPendingLine    JaslNormal
+        hi link JaslNormalOpPendingBlock   JaslNormal
+        hi link JaslNormalCtrlO            JaslNormal
+        hi link JaslNormalReplaceCtrlO     JaslNormal
+        hi link JaslNormalVirtualCtrlO     JaslNormal
+        hi link JaslVisualLine             JaslVisual
+        hi link JaslVisualBlock            JaslVisual
+        hi link JaslVisualSelect           JaslVisual
+        hi link JaslVisualSelectLine       JaslVisual
+        hi link JaslVisualSelectBlock      JaslVisual
+        hi link JaslInsertInsertCompletion JaslInsert
+        hi link JaslInsertCtrlX            JaslInsert
+        hi link JaslReplaceCompletion      JaslReplace
+        hi link JaslReplaceVirtual         JaslReplace
+        hi link JaslReplaceCtrlX           JaslReplace
+        hi link JaslCommandEx              JaslCommand
+        hi link JaslCommandExNormal        JaslCommand
+    else
+        lua require('just-a-status-line').default_highlight()
+    endif
+endf
+
+let g:jasl_highlight = 'call MyHighlight()'
+" }}}
+
 " }}}
 
 " use tabs in gdscript3 files {{{
