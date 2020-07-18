@@ -188,6 +188,8 @@ function LspStatus() abort
     endif
 endfunction
 
+set hidden
+
 if has('nvim-0.5.0')
     " nvim-lsp {{{
     set completeopt=menuone,noinsert,noselect
@@ -230,7 +232,6 @@ if has('nvim-0.5.0')
     " }}}
 else
     " coc.nvim {{{
-    set hidden
     set updatetime=300
     set shortmess+=c
     if has("patch-8.1.1564")
