@@ -325,6 +325,32 @@ fu MyHighlight() abort
 endf
 
 let g:jasl_highlight = 'call MyHighlight()'
+" TODO: put this in its own file
+let g:jasl_active = "require('jasl').active_line({\n"
+\ . "  right = {\n"
+\ . "    function()\n"
+\ . "      return vim.fn.col('.')\n"
+\ . "    end,\n"
+\ . "    function()\n"
+\ . "      if vim.tbl_isempty(vim.lsp.buf_get_clients()) then\n"
+\ . "        return ''\n"
+\ . "      else\n"
+\ . "        local server_name = ''\n"
+\ . "        -- sometimes the client list doesnt start at 1 :(\n"
+\ . "        for k, v in pairs(vim.lsp.buf_get_clients()) do\n"
+\ . "          server_name = v.name\n"
+\ . "        end\n"
+\ . "        if vim.lsp.buf.server_ready() then\n"
+\ . "          return server_name\n"
+\ . "        else\n"
+\ . "          return 'loading ' .. server_name .. '...'\n"
+\ . "        end\n"
+\ . "      end\n"
+\ . "    end,\n"
+\ . "  }\n"
+\ . "})\n"
+
+
 " }}}
 
 " }}}
