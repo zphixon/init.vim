@@ -146,6 +146,7 @@ Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'qpkorr/vim-bufkill'
+Plug 'norcalli/typeracer.nvim'
 
 " ui
 Plug 'ctrlpvim/ctrlp.vim'
@@ -285,19 +286,6 @@ else
     endfunction
 
     autocmd CursorHold * silent call CocActionAsync('highlight')
-
-    let g:lightline = {
-                \ 'colorscheme': 'gruvbox_material',
-                \ 'active': {
-                \   'left': [
-                \     ['mode', 'paste'],
-                \     ['filename', 'readonly', 'modified', 'cocstatus']
-                \   ],
-                \ },
-                \ 'component_function': {
-                \   'cocstatus': 'coc#status'
-                \ }
-                \ }
     " }}}
 endif
 
@@ -332,7 +320,7 @@ fu MyHighlight() abort
         hi link JaslCommandEx              JaslCommand
         hi link JaslCommandExNormal        JaslCommand
     else
-        lua require('just-a-status-line').default_highlight()
+        lua require('jasl').default_highlight()
     endif
 endf
 
