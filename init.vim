@@ -47,6 +47,9 @@ nnoremap <leader>wn :new<cr>
 " }}}
 
 " configs {{{
+if has('win32')
+    set noswapfile
+endif
 
 filetype plugin on
 
@@ -332,6 +335,9 @@ let g:jasl_active = "require('jasl').active_line({\n"
 \ . "      return vim.fn.col('.')\n"
 \ . "    end,\n"
 \ . "    function()\n"
+\ . "      return vim.o.ff\n"
+\ . "    end,\n"
+\ . "    function()\n"
 \ . "      if vim.tbl_isempty(vim.lsp.buf_get_clients()) then\n"
 \ . "        return ''\n"
 \ . "      else\n"
@@ -370,4 +376,14 @@ augroup FuckingChrist
     au FileType html setlocal ts=2 sw=2 sts=2 et
 augroup END
 " }}}
+
+" fix prof shaw's stupid fucking indents and parens {{{
+fu! FixProfShawsStupidFuckingIndentsAndParens()
+    ma e
+    %s///
+    %s/( /(/ge
+    %s/ )/)/ge
+    %s/\s*$//e
+    'e
+endf
 
