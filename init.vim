@@ -151,8 +151,12 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-"call s:local_plug('just-a-status-line')
-Plug 'zphixon/just-a-status-line'
+
+if has('win32')
+    call s:local_plug('just-a-status-line')
+else
+    Plug 'zphixon/just-a-status-line'
+endif
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
