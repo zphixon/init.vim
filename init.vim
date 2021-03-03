@@ -105,7 +105,6 @@ set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
 set formatoptions-=t
 set textwidth=0 wrapmargin=0
 set tw=0
-set fileformats=unix
 
 "neovide
 let g:neovide_refresh_rate = 144
@@ -135,8 +134,8 @@ Plug 'junegunn/fzf'
 
 if has('nvim-0.5.0')
     Plug 'neovim/nvim-lsp'
+    Plug 'neovim/nvim-lspconfig'
     Plug 'nvim-lua/completion-nvim'
-    Plug 'nvim-lua/diagnostic-nvim'
 else
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
 endif
@@ -155,7 +154,8 @@ Plug 'norcalli/typeracer.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-call s:local_plug('just-a-status-line')
+"call s:local_plug('just-a-status-line')
+Plug 'zphixon/just-a-status-line'
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
@@ -202,9 +202,8 @@ if has('nvim-0.5.0')
     lua
                 \ function my_on_attach()
                 \     require("completion").on_attach()
-                \     require("diagnostic").on_attach()
                 \ end
-                \ require("nvim_lsp").rust_analyzer.setup({
+                \ require("lspconfig").rust_analyzer.setup({
                 \     on_attach = my_on_attach
                 \ })
 
@@ -231,8 +230,6 @@ if has('nvim-0.5.0')
 
     let g:completion_sorting = 'none'
     autocmd FileType rust let g:completion_trigger_characters=['.', '::']
-
-    let g:diagnostic_enable_virtual_text=1
     " }}}
 else
     " coc.nvim {{{
@@ -359,6 +356,8 @@ let g:jasl_active = "require('jasl').active_line({\n"
 
 " }}}
 
+autocmd BufWritePost * GitGutter
+
 " }}}
 
 " use tabs in gdscript3 files {{{
@@ -386,4 +385,5 @@ fu! FixProfShawsStupidFuckingIndentsAndParens()
     %s/\s*$//e
     'e
 endf
+" }}}
 
