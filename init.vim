@@ -34,9 +34,6 @@ nnoremap <leader>sf :w<cr>
 nnoremap <leader>ch :noh<cr>
 nnoremap <leader>bd :BD<cr>
 
-nnoremap <leader>bb :CtrlPBuffer<cr>
-nnoremap <leader>ff :CtrlP<cr>
-
 nnoremap <leader>wh <C-w>h
 nnoremap <leader>wj <C-w>j
 nnoremap <leader>wk <C-w>k
@@ -130,8 +127,6 @@ else
 endif
 
 " completion
-Plug 'junegunn/fzf'
-
 if has('nvim-0.5.0')
     Plug 'neovim/nvim-lsp'
     Plug 'neovim/nvim-lspconfig'
@@ -151,7 +146,9 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'norcalli/typeracer.nvim'
 
 " ui
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 "call s:local_plug('just-a-status-line')
@@ -215,18 +212,16 @@ if has('nvim-0.5.0')
         endif
     endfunction
 
-    "nnoremap gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-    "nnoremap <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
     nnoremap gd    <cmd>lua vim.lsp.buf.definition()<CR>
+    nnoremap gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
     nnoremap K     <cmd>call <SID>show_documentation()<CR>
-    nnoremap gD    <cmd>lua vim.lsp.buf.implementation()<CR>
     nnoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-    nnoremap 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
     nnoremap gr    <cmd>lua vim.lsp.buf.references()<CR>
     nnoremap g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
     nnoremap gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-    nnoremap ]g    <cmd>NextDiagnostic<CR>
-    nnoremap [g    <cmd>PrevDiagnostic<CR>
+    nnoremap ]g    <cmd>lua vim.lsp.diagnostic.goto_next()<cr>
+    nnoremap [g    <cmd>lua vim.lsp.diagnostic.goto_prev()<cr>
+    nnoremap <leader>rn <cmd> lua vim.lsp.buf.rename()<cr>
 
     let g:completion_sorting = 'none'
     autocmd FileType rust let g:completion_trigger_characters=['.', '::']
@@ -358,6 +353,11 @@ let g:jasl_active = "require('jasl').active_line({\n"
 
 autocmd BufWritePost * GitGutter
 
+" telescope
+nnoremap <leader>bb <cmd>Telescope buffers<cr>
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>lr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+
 " }}}
 
 " use tabs in gdscript3 files {{{
@@ -379,7 +379,6 @@ augroup END
 " fix prof shaw's stupid fucking indents and parens {{{
 fu! FixProfShawsStupidFuckingIndentsAndParens()
     ma e
-    %s///
     %s/( /(/ge
     %s/ )/)/ge
     %s/\s*$//e
