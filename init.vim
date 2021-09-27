@@ -29,8 +29,8 @@ let maplocalleader="'"
 nnoremap <leader>ev :e $MYVIMRC<cr>
 nnoremap <leader>sv :so %<cr>
 
-nnoremap <leader>fs :w<cr>
-nnoremap <leader>sf :w<cr>
+nnoremap <leader>fs :up<cr>
+nnoremap <leader>sf :up<cr>
 nnoremap <leader>ch :noh<cr>
 nnoremap <leader>bd :BD<cr>
 
