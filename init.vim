@@ -127,13 +127,11 @@ else
 endif
 
 " completion
-if has('nvim-0.5.0')
-    Plug 'neovim/nvim-lsp'
-    Plug 'neovim/nvim-lspconfig'
-    Plug 'nvim-lua/completion-nvim'
-else
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/cmp-vsnip'
 
 " highlighting
 Plug 'sheerun/vim-polyglot'
@@ -146,10 +144,8 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'norcalli/typeracer.nvim'
 
 " ui
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-vinegar'
 Plug 'airblade/vim-gitgutter'
 
 if has('win32')
@@ -195,98 +191,70 @@ endfunction
 
 set hidden
 
-if has('nvim-0.5.0')
-    " nvim-lsp {{{
-    set completeopt=menuone,noinsert,noselect
-    set shortmess+=c
+" vsnip
 
-    lua
-                \ function my_on_attach()
-                \     require("completion").on_attach()
-                \ end
-                \ require("lspconfig").rust_analyzer.setup({
-                \     on_attach = my_on_attach
-                \ })
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
-    function! s:show_documentation()
-        if (index(['vim','help'], &filetype) >= 0)
-            execute 'h '.expand('<cword>')
-        else
-            lua vim.lsp.buf.hover()
-        endif
-    endfunction
+" nvim-lsp {{{
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 
-    nnoremap gd    <cmd>lua vim.lsp.buf.definition()<CR>
-    nnoremap gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-    nnoremap K     <cmd>call <SID>show_documentation()<CR>
-    nnoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-    nnoremap gr    <cmd>lua vim.lsp.buf.references()<CR>
-    nnoremap g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-    nnoremap gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-    nnoremap ]g    <cmd>lua vim.lsp.diagnostic.goto_next()<cr>
-    nnoremap [g    <cmd>lua vim.lsp.diagnostic.goto_prev()<cr>
-    nnoremap <leader>rn <cmd> lua vim.lsp.buf.rename()<cr>
-
-    let g:completion_sorting = 'none'
-    autocmd FileType rust let g:completion_trigger_characters=['.', '::']
-    " }}}
-else
-    " coc.nvim {{{
-    set updatetime=300
-    set shortmess+=c
-    if has("patch-8.1.1564")
-        set signcolumn=number
+function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
     else
-        set signcolumn=yes
+        lua vim.lsp.buf.hover()
     endif
+endfunction
 
-    " tab insert
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+nnoremap gd    <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap K     <cmd>call <SID>show_documentation()<CR>
+nnoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap ]g    <cmd>lua vim.lsp.diagnostic.goto_next()<cr>
+nnoremap [g    <cmd>lua vim.lsp.diagnostic.goto_prev()<cr>
+nnoremap <leader>rn <cmd> lua vim.lsp.buf.rename()<cr>
 
-    " true if there's space behind the cursor
-    function! s:check_back_space() abort
-        let col = col('.') - 1
-        return !col || getline('.')[col-1] =~# '\s'
-    endfunction
+lua <<EOF
+-- Setup nvim-cmp.
+local cmp = require'cmp'
 
-    " ctrl-space completion
-    inoremap <silent><expr> <c-space> coc#refresh()
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body)
+        end
+    },
+    mapping = {
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        --['<Tab>'] = cmp.mapping.confirm({ select = true }),
+    },
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'vsnip' },
+        --{ name = 'buffer' },
+    }
+})
 
-    if exists('*complete_info')
-        inoremap <expr><cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u<CR>"
-    else
-        inoremap <expr><cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-    endif
+  -- Setup lspconfig.
+require('lspconfig')['rust_analyzer'].setup({
+    capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+})
+EOF
 
-    " next/prev error messages
-    nmap <silent> [g <Plug>(coc-diagnostic-prev)
-    nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-    " jump to definition/implementation
-    nmap <silent> <leader>gd <Plug>(coc-definition)
-    nmap <silent> <leader>gy <Plug>(coc-type-definition)
-    nmap <silent> <leader>gi <Plug>(coc-implementation)
-    nmap <silent> <leader>gr <Plug>(coc-references)
-    nmap <leader>rn <Plug>(coc-rename)
-
-    " show docs
-    nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-    function! s:show_documentation()
-        if (index(['vim','help'], &filetype) >= 0)
-            execute 'h '.expand('<cword>')
-        else
-            call CocAction('doHover')
-        endif
-    endfunction
-
-    autocmd CursorHold * silent call CocActionAsync('highlight')
-    " }}}
-endif
+"let g:completion_sorting = 'none'
+"autocmd FileType rust let g:completion_trigger_characters=['.', '::']
+" }}}
 
 " jasl {{{
 fu MyHighlight() abort
