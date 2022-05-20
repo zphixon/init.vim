@@ -17,9 +17,15 @@ map <silent> <M-p> :call CursorColumn()<cr>
 nmap <silent> <F5> :checktime<cr>
 
 inoremap jk <Esc>
-iabbrev slef self
-inoremap sle.f self.
-inoremap sel.f self.
+inoremap Jk <Esc>
+inoremap JK <Esc>
+
+inoremap unrwap unwrap
+inoremap unrwpa unwrap
+inoremap unwrpa unwrap
+
+nnoremap j gj
+nnoremap k gk
 
 tmap jk <C-\><C-n>
 tmap <Esc> <C-\><C-n>
@@ -86,7 +92,7 @@ set list
 set number
 set relativenumber
 set cursorline
-set nowrap
+set linebreak
 set nospell
 set noshowmode
 set noequalalways
@@ -94,6 +100,7 @@ set inccommand=nosplit
 set tgc
 set mouse=n
 syntax on
+"let &t_ut=''
 
 " 4 spaces, no tab characters
 set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
@@ -128,6 +135,8 @@ endif
 
 " completion
 Plug 'neovim/nvim-lspconfig'
+"Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+"Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/vim-vsnip'
@@ -135,24 +144,30 @@ Plug 'hrsh7th/cmp-vsnip'
 
 " highlighting
 Plug 'sheerun/vim-polyglot'
+Plug 'chrisbra/Colorizer'
+"Plug 'dunedain289/vim-tup'
+Plug 'mlochbaum/BQN', {'rtp': 'editors/vim'}
+call s:local_plug('stones/vim')
 
 " enhancements
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'qpkorr/vim-bufkill'
-Plug 'norcalli/typeracer.nvim'
+"Plug 'norcalli/typeracer.nvim'
+Plug 'andrejlevkovitch/vim-lua-format'
+Plug 'tpope/vim-abolish'
+"Plug 'vimwiki/vimwiki'
 
 " ui
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
 Plug 'airblade/vim-gitgutter'
-
-if has('win32')
-    call s:local_plug('just-a-status-line')
-else
-    Plug 'zphixon/just-a-status-line'
-endif
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim'
+"Plug 'itchyny/lightline.vim'
+"Plug 'josa42/nvim-lightline-lsp'
 
 " colorschemes
 Plug 'chriskempson/base16-vim'
@@ -165,6 +180,11 @@ call plug#end()
 " }}}
 
 " plugin config {{{
+"let g:vimwiki_list = [{'path': '~/source/wiki'}]
+
+autocmd FileType lua nnoremap <buffer> <c-k> :call LuaFormat()<cr>
+autocmd BufWrite *.lua :call LuaFormat()
+
 let g:rustfmt_autosave = 1
 
 let g:gruvbox_material_background = 'medium'
@@ -222,104 +242,67 @@ nnoremap [g    <cmd>lua vim.lsp.diagnostic.goto_prev()<cr>
 nnoremap <leader>rn <cmd> lua vim.lsp.buf.rename()<cr>
 
 lua <<EOF
--- Setup nvim-cmp.
-local cmp = require'cmp'
 
+local cmp = require('cmp')
 cmp.setup({
-    snippet = {
-        expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body)
-        end
-    },
-    mapping = {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
-        --['<Tab>'] = cmp.mapping.confirm({ select = true }),
-    },
-    sources = {
-        { name = 'nvim_lsp' },
-        { name = 'vsnip' },
-        --{ name = 'buffer' },
-    }
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
+    end,
+  },
+  mapping = {
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' }, -- For vsnip users.
+    -- { name = 'luasnip' }, -- For luasnip users.
+    -- { name = 'ultisnips' }, -- For ultisnips users.
+    -- { name = 'snippy' }, -- For snippy users.
+  }, {
+    { name = 'buffer' },
+  })
 })
 
-  -- Setup lspconfig.
-require('lspconfig')['rust_analyzer'].setup({
-    capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+require('lspconfig')['pylsp'].setup({capabilities = capabilities})
+require('lspconfig')['rust_analyzer'].setup({capabilities = capabilities})
+require('lspconfig')['zls'].setup({capabilities = capabilities})
+require('lspconfig')['sumneko_lua'].setup({
+    cmd = { 'lua-language-server' },
+    settings = {
+        Lua = {
+            runtime = {
+                version = 'LuaJIT',
+            },
+            workspace = {
+                library = {
+                    "${3rd}/love2d/library"
+                },
+                checkThirdParty = false,
+            },
+        },
+    },
+    capabilities = capabilities,
 })
+
+require('lspconfig')['clangd'].setup({ capabilities = capabilities })
 EOF
-
-"let g:completion_sorting = 'none'
-"autocmd FileType rust let g:completion_trigger_characters=['.', '::']
-" }}}
-
-" jasl {{{
-fu MyHighlight() abort
-    if exists('*gruvbox_material#get_configuration')
-        let g:gc = gruvbox_material#get_configuration()
-        let g:gp = gruvbox_material#get_palette(g:gc.background, g:gc.palette)
-        exe 'hi JaslNormal   guifg=' . g:gp.blue[0]   . ' guibg=#3a3735'
-        exe 'hi JaslVisual   guifg=' . g:gp.green[0]  . ' guibg=#3a3735'
-        exe 'hi JaslInsert   guifg=' . g:gp.purple[0] . ' guibg=#3a3735'
-        exe 'hi JaslReplace  guifg=' . g:gp.red[0]    . ' guibg=#3a3735'
-        exe 'hi JaslCommand  guifg=' . g:gp.yellow[0] . ' guibg=#3a3735'
-        exe 'hi JaslTerminal guifg=' . g:gp.aqua[0]   . ' guibg=#3a3735'
-        hi link JaslNormalOpPending        JaslNormal
-        hi link JaslNormalOpPendingChar    JaslNormal
-        hi link JaslNormalOpPendingLine    JaslNormal
-        hi link JaslNormalOpPendingBlock   JaslNormal
-        hi link JaslNormalCtrlO            JaslNormal
-        hi link JaslNormalReplaceCtrlO     JaslNormal
-        hi link JaslNormalVirtualCtrlO     JaslNormal
-        hi link JaslVisualLine             JaslVisual
-        hi link JaslVisualBlock            JaslVisual
-        hi link JaslVisualSelect           JaslVisual
-        hi link JaslVisualSelectLine       JaslVisual
-        hi link JaslVisualSelectBlock      JaslVisual
-        hi link JaslInsertInsertCompletion JaslInsert
-        hi link JaslInsertCtrlX            JaslInsert
-        hi link JaslReplaceCompletion      JaslReplace
-        hi link JaslReplaceVirtual         JaslReplace
-        hi link JaslReplaceCtrlX           JaslReplace
-        hi link JaslCommandEx              JaslCommand
-        hi link JaslCommandExNormal        JaslCommand
-    else
-        lua require('jasl').default_highlight()
-    endif
-endf
-
-let g:jasl_highlight = 'call MyHighlight()'
-" TODO: put this in its own file
-let g:jasl_active = "require('jasl').active_line({\n"
-\ . "  right = {\n"
-\ . "    function()\n"
-\ . "      return vim.fn.col('.')\n"
-\ . "    end,\n"
-\ . "    function()\n"
-\ . "      return vim.o.ff\n"
-\ . "    end,\n"
-\ . "    function()\n"
-\ . "      if vim.tbl_isempty(vim.lsp.buf_get_clients()) then\n"
-\ . "        return ''\n"
-\ . "      else\n"
-\ . "        local server_name = ''\n"
-\ . "        -- sometimes the client list doesnt start at 1 :(\n"
-\ . "        for k, v in pairs(vim.lsp.buf_get_clients()) do\n"
-\ . "          server_name = v.name\n"
-\ . "        end\n"
-\ . "        if vim.lsp.buf.server_ready() then\n"
-\ . "          return server_name\n"
-\ . "        else\n"
-\ . "          return 'loading ' .. server_name .. '...'\n"
-\ . "        end\n"
-\ . "      end\n"
-\ . "    end,\n"
-\ . "  }\n"
-\ . "})\n"
-
 
 " }}}
 

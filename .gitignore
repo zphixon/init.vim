@@ -1,4 +1,1 @@
-autoload
-plugged
-rplugin.vim
-.netrwhist
+plugin
