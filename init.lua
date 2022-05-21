@@ -11,8 +11,6 @@ require('packer').startup(function()
 
   -- completion
   use 'neovim/nvim-lspconfig'
-  -- use {'ms-jpq/coq_nvim', branch = 'coq'}
-  -- use {'ms-jpq/coq.artifacts', branch = 'artifacts'}
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/vim-vsnip'
@@ -21,7 +19,6 @@ require('packer').startup(function()
   -- highlighting
   use 'sheerun/vim-polyglot'
   use 'chrisbra/Colorizer'
-  -- use 'dunedain289/vim-tup'
   use {'mlochbaum/BQN', rtp = 'editors/vim'}
 
   -- enhancements
@@ -29,7 +26,6 @@ require('packer').startup(function()
   use 'tpope/vim-surround'
   use 'tpope/vim-repeat'
   use 'qpkorr/vim-bufkill'
-  -- use 'norcalli/typeracer.nvim'
   use 'andrejlevkovitch/vim-lua-format'
   use 'tpope/vim-abolish'
 
@@ -39,7 +35,6 @@ require('packer').startup(function()
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
   use 'lukas-reineke/indent-blankline.nvim'
-  -- use'zphixon/just-a-status-line'
 
   -- colorschemes
   use 'chriskempson/base16-vim'
@@ -127,7 +122,7 @@ vim.opt.shortmess:append({c = true})
 
 -- vim.opt.tabstop = 4
 -- vim.opt.softtabstop = 4
--- vim.opt.expandtab = true
+vim.opt.expandtab = true
 -- vim.opt.shiftwidth = 4
 vim.opt.smarttab = true
 
@@ -152,8 +147,6 @@ vim.cmd('autocmd BufWrite *.lua :call LuaFormat()')
 
 vim.api.nvim_set_var('rustfmt_autosave', 1)
 
--- vim.api.nvim_set_var('ctrlp_match_window', 'max:35')
-
 local function vsnip_jump(dir, plugbind, realbind)
   return function()
     if vim.fn['vsnip#jumpable'](dir) then
@@ -163,9 +156,11 @@ local function vsnip_jump(dir, plugbind, realbind)
     end
   end
 end
+
 local function vsnip_forward()
   return vsnip_jump(1, '<Plug>(vsnip-jump-next)', '<Tab>')
 end
+
 local function vsnip_backward()
   return vsnip_jump(-1, '<Plug>(vsnip-jump-prev)', '<S-Tab>')
 end
@@ -195,30 +190,18 @@ vim.keymap.set('n', ']g', vim.lsp.diagnostic.goto_next)
 vim.keymap.set('n', '[g', vim.lsp.diagnostic.goto_prev)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 
--- vim.
-
 local cmp = require('cmp')
 cmp.setup({
-  snippet = {
-    -- REQUIRED - you must specify a snippet engine
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-      -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
-    end,
-  },
+  snippet = {expand = function(args) vim.fn["vsnip#anonymous"](args.body) end},
   mapping = cmp.mapping.preset.insert({
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
-    -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    -- ['<C-y>'] = cmp.config.disable,
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({select = true}),
   }),
-  sources = cmp.config.sources({{name = 'nvim_lsp'}, {name = 'vsnip'}}),
-  -- {{name = 'buffer'}}),
+  sources = cmp.config.sources({{name = 'nvim_lsp'}, {name = 'vsnip'}},
+                               {{name = 'buffer'}}),
 })
 
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
@@ -246,5 +229,3 @@ require('lspconfig')['sumneko_lua'].setup({
 })
 
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
-
--- print('done loading, enjoy')
