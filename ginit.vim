@@ -1,2 +1,1 @@
-
-Guifont Dina:h12
+Guifont Comic\ Mono:h12

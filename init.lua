@@ -1,3 +1,8 @@
+local current_dir = vim.fn.getcwd()
+if vim.tbl_contains({'C:\\WINDOWS\\system32', 'C:\\Users\\Zack'}, current_dir) then
+  vim.cmd('cd ~/source')
+end
+
 vim.cmd([[
  augroup Packer
    au!
@@ -119,6 +124,13 @@ vim.opt.mouse = 'nv'
 vim.cmd('syntax on')
 vim.opt.completeopt = {'menuone', 'noinsert', 'noselect'}
 vim.opt.shortmess:append({c = true})
+
+vim.api.nvim_set_var('neovide_refresh_rate', 144)
+vim.api.nvim_set_var('neovide_cursor_animation_length', 0.07)
+vim.api.nvim_set_var('neovide_cursor_trail_length', 0.2)
+vim.api.nvim_set_var('neovide_remember_window_size', true)
+vim.api.nvim_set_var('neovide_input_use_logo', false)
+vim.opt.guifont = {'Comic Mono:h10'}
 
 -- vim.opt.tabstop = 4
 -- vim.opt.softtabstop = 4

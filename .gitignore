@@ -1,3 +1,5 @@
 autoload
 plugin
 plugged
+rplugin.vim
+.netrwhist
