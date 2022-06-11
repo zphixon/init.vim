@@ -72,6 +72,7 @@ vim.keymap.set('i', 'JK', '<Esc>')
 vim.keymap.set('i', 'unrwap', 'unwrap')
 vim.keymap.set('i', 'unrwpa', 'unwrap')
 vim.keymap.set('i', 'unwrpa', 'unwrap')
+vim.keymap.set('i', 'uwnrap', 'unwrap')
 
 vim.api.nvim_set_var('mapleader', ' ')
 vim.api.nvim_set_var('maplocalleader', "'")
@@ -86,6 +87,10 @@ vim.keymap.set('n', '<leader>wh', '<C-w>h')
 vim.keymap.set('n', '<leader>wj', '<C-w>j')
 vim.keymap.set('n', '<leader>wk', '<C-w>k')
 vim.keymap.set('n', '<leader>wl', '<C-w>l')
+vim.keymap.set('n', '<leader>wH', '<C-w>H')
+vim.keymap.set('n', '<leader>wJ', '<C-w>J')
+vim.keymap.set('n', '<leader>wK', '<C-w>K')
+vim.keymap.set('n', '<leader>wL', '<C-w>L')
 vim.keymap.set('n', '<leader>w/', command('vsplit'))
 vim.keymap.set('n', '<leader>wd', command('quit'))
 vim.keymap.set('n', '<leader>wn', command('split'))
@@ -144,9 +149,13 @@ vim.opt.wrapmargin = 0
 vim.opt.tw = 0
 
 vim.cmd('autocmd BufWritePost * GitGutter')
+vim.cmd('autocmd FileType fugitive set spell')
 
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
-vim.keymap.set('n', '<leader>ff', command('Telescope find_files'))
+vim.keymap.set('n', '<leader>ff',
+               function()
+                 require('telescope.builtin').find_files({no_ignore=true})
+               end)
 vim.keymap.set('n', '<leader>lr',
                function() require('telescope.builtin').lsp_references() end)
 
