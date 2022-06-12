@@ -53,7 +53,7 @@ end)
 local function command(cmd) return function() vim.cmd(cmd) end end
 
 local function cursor_column()
-  if vim.opt.cursorcolumn then
+  if vim.opt.cursorcolumn:get() then
     vim.opt.cursorcolumn = false
   else
     vim.opt.cursorcolumn = true
