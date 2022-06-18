@@ -154,7 +154,7 @@ vim.cmd('autocmd FileType fugitive set spell')
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
 vim.keymap.set('n', '<leader>ff',
                function()
-                 require('telescope.builtin').find_files({no_ignore=true})
+                 require('telescope.builtin').find_files()
                end)
 vim.keymap.set('n', '<leader>lr',
                function() require('telescope.builtin').lsp_references() end)
