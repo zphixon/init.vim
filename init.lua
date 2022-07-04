@@ -40,6 +40,7 @@ require('packer').startup(function()
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
   use 'lukas-reineke/indent-blankline.nvim'
+  use 'duane9/nvim-rg'
 
   -- colorschemes
   use 'chriskempson/base16-vim'
