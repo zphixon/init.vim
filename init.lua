@@ -39,7 +39,8 @@ require('packer').startup(function()
   use 'tpope/vim-vinegar'
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
-  use 'lukas-reineke/indent-blankline.nvim'
+  -- use 'lukas-reineke/indent-blankline.nvim'
+  -- use 'Yggdroot/indentLine'
   use 'duane9/nvim-rg'
 
   -- colorschemes
@@ -114,7 +115,7 @@ vim.fn.matchadd('ColorColumn', '\\%81v', 100) -- string is sussy
 vim.opt.scrolloff = 6
 vim.opt.foldmethod = 'marker'
 
-vim.opt.listchars = 'tab:»»,trail:█,nbsp:~'
+vim.opt.listchars = 'tab:│ ,lead:-,trail:█,nbsp:~'
 vim.opt.list = true
 
 vim.opt.number = true
@@ -140,9 +141,13 @@ vim.opt.guifont = {'Comic Mono:h10'}
 
 -- vim.opt.tabstop = 4
 -- vim.opt.softtabstop = 4
-vim.opt.expandtab = true
+-- vim.opt.expandtab = true
 -- vim.opt.shiftwidth = 4
-vim.opt.smarttab = true
+-- vim.opt.smarttab = true
+vim.opt.tabstop = 4
+vim.opt.expandtab = false
+vim.opt.copyindent = true
+vim.opt.preserveindent = true
 
 vim.opt.formatoptions:remove('t')
 vim.opt.textwidth = 0
@@ -251,3 +256,5 @@ require('lspconfig')['sumneko_lua'].setup({
 })
 
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
+
+-- require('indent_blankline').setup({})
