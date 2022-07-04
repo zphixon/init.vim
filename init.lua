@@ -39,8 +39,6 @@ require('packer').startup(function()
   use 'tpope/vim-vinegar'
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
-  -- use 'lukas-reineke/indent-blankline.nvim'
-  -- use 'Yggdroot/indentLine'
   use 'duane9/nvim-rg'
 
   -- colorschemes
@@ -139,11 +137,6 @@ vim.api.nvim_set_var('neovide_remember_window_size', true)
 vim.api.nvim_set_var('neovide_input_use_logo', false)
 vim.opt.guifont = {'Comic Mono:h10'}
 
--- vim.opt.tabstop = 4
--- vim.opt.softtabstop = 4
--- vim.opt.expandtab = true
--- vim.opt.shiftwidth = 4
--- vim.opt.smarttab = true
 vim.opt.tabstop = 4
 vim.opt.expandtab = false
 vim.opt.copyindent = true
@@ -159,8 +152,7 @@ vim.cmd('autocmd FileType fugitive set spell')
 
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
 vim.keymap.set('n', '<leader>ff', function()
-  -- require('telescope.builtin').find_files({no_ignore = true})
-  require('telescope.builtin').find_files()
+  require('telescope.builtin').find_files({hidden = true})
 end)
 vim.keymap.set('n', '<leader>lr',
                function() require('telescope.builtin').lsp_references() end)
@@ -256,5 +248,3 @@ require('lspconfig')['sumneko_lua'].setup({
 })
 
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
-
--- require('indent_blankline').setup({})
