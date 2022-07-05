@@ -39,7 +39,7 @@ require('packer').startup(function()
   use 'tpope/vim-vinegar'
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
-  use 'lukas-reineke/indent-blankline.nvim'
+  use 'duane9/nvim-rg'
 
   -- colorschemes
   use 'chriskempson/base16-vim'
@@ -113,7 +113,7 @@ vim.fn.matchadd('ColorColumn', '\\%81v', 100) -- string is sussy
 vim.opt.scrolloff = 6
 vim.opt.foldmethod = 'marker'
 
-vim.opt.listchars = 'tab:»»,trail:█,nbsp:~'
+vim.opt.listchars = 'tab:│ ,lead:-,trail:█,nbsp:~'
 vim.opt.list = true
 
 vim.opt.number = true
@@ -137,11 +137,10 @@ vim.api.nvim_set_var('neovide_remember_window_size', true)
 vim.api.nvim_set_var('neovide_input_use_logo', false)
 vim.opt.guifont = {'Comic Mono:h10'}
 
--- vim.opt.tabstop = 4
--- vim.opt.softtabstop = 4
-vim.opt.expandtab = true
--- vim.opt.shiftwidth = 4
-vim.opt.smarttab = true
+vim.opt.tabstop = 4
+vim.opt.expandtab = false
+vim.opt.copyindent = true
+vim.opt.preserveindent = true
 
 vim.opt.formatoptions:remove('t')
 vim.opt.textwidth = 0
@@ -152,10 +151,9 @@ vim.cmd('autocmd BufWritePost * GitGutter')
 vim.cmd('autocmd FileType fugitive set spell')
 
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
-vim.keymap.set('n', '<leader>ff',
-               function()
-                 require('telescope.builtin').find_files()
-               end)
+vim.keymap.set('n', '<leader>ff', function()
+  require('telescope.builtin').find_files({hidden = true})
+end)
 vim.keymap.set('n', '<leader>lr',
                function() require('telescope.builtin').lsp_references() end)
 
