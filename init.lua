@@ -23,6 +23,7 @@ require('packer').startup(function()
 
   -- highlighting
   use 'sheerun/vim-polyglot'
+  -- use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'chrisbra/Colorizer'
   use {'mlochbaum/BQN', rtp = 'editors/vim'}
 
@@ -40,6 +41,7 @@ require('packer').startup(function()
   use 'airblade/vim-gitgutter'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
   use 'duane9/nvim-rg'
+  use 'lukas-reineke/indent-blankline.nvim'
 
   -- colorschemes
   use 'chriskempson/base16-vim'
@@ -113,7 +115,7 @@ vim.fn.matchadd('ColorColumn', '\\%81v', 100) -- string is sussy
 vim.opt.scrolloff = 6
 vim.opt.foldmethod = 'marker'
 
-vim.opt.listchars = 'tab:│ ,lead:-,trail:█,nbsp:~'
+vim.opt.listchars = 'tab:--,trail:█,nbsp:~'
 vim.opt.list = true
 
 vim.opt.number = true
@@ -138,7 +140,7 @@ vim.api.nvim_set_var('neovide_input_use_logo', false)
 vim.opt.guifont = {'Comic Mono:h10'}
 
 vim.opt.tabstop = 4
-vim.opt.expandtab = false
+vim.opt.expandtab = true
 vim.opt.copyindent = true
 vim.opt.preserveindent = true
 
@@ -152,7 +154,9 @@ vim.cmd('autocmd FileType fugitive set spell')
 
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
 vim.keymap.set('n', '<leader>ff', function()
-  require('telescope.builtin').find_files({hidden = true})
+  local ok = pcall(require('telescope.builtin').git_files,
+                   {show_untracked = true})
+  if not ok then require('telescope.builtin').find_files({hidden = true}) end
 end)
 vim.keymap.set('n', '<leader>lr',
                function() require('telescope.builtin').lsp_references() end)
@@ -160,6 +164,11 @@ vim.keymap.set('n', '<leader>lr',
 vim.opt.background = 'dark'
 vim.api.nvim_set_var('gruvbox_material_background', 'medium')
 vim.cmd('colorscheme gruvbox-material')
+
+require('indent_blankline').setup({
+  show_current_context = true,
+  show_current_context_start = true,
+})
 
 vim.cmd('autocmd FileType lua nnoremap <buffer> <c-k> :call LuaFormat()')
 vim.cmd('autocmd BufWrite *.lua :call LuaFormat()')
