@@ -3,6 +3,8 @@ if vim.tbl_contains({'C:\\WINDOWS\\system32', 'C:\\Users\\Zack'}, current_dir) t
   vim.cmd('cd ~/source')
 end
 
+vim.g.polyglot_disabled = {'autoindent'}
+
 vim.cmd([[
  augroup Packer
    au!
@@ -165,10 +167,7 @@ vim.opt.background = 'dark'
 vim.api.nvim_set_var('gruvbox_material_background', 'medium')
 vim.cmd('colorscheme gruvbox-material')
 
-require('indent_blankline').setup({
-  show_current_context = true,
-  show_current_context_start = true,
-})
+require('indent_blankline').setup({})
 
 vim.cmd('autocmd FileType lua nnoremap <buffer> <c-k> :call LuaFormat()')
 vim.cmd('autocmd BufWrite *.lua :call LuaFormat()')
