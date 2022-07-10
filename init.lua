@@ -3,7 +3,7 @@ if vim.tbl_contains({'C:\\WINDOWS\\system32', 'C:\\Users\\Zack'}, current_dir) t
   vim.cmd('cd ~/source')
 end
 
-vim.g.polyglot_disabled = {'autoindent'}
+vim.g.polyglot_disabled = {'autoindent', 'sensible'}
 
 vim.cmd([[
  augroup Packer
@@ -151,7 +151,6 @@ vim.opt.textwidth = 0
 vim.opt.wrapmargin = 0
 vim.opt.tw = 0
 
-vim.cmd('autocmd BufWritePost * GitGutter')
 vim.cmd('autocmd FileType fugitive set spell')
 
 vim.keymap.set('n', '<leader>bb', command('Telescope buffers'))
@@ -160,8 +159,6 @@ vim.keymap.set('n', '<leader>ff', function()
                    {show_untracked = true})
   if not ok then require('telescope.builtin').find_files({hidden = true}) end
 end)
-vim.keymap.set('n', '<leader>lr',
-               function() require('telescope.builtin').lsp_references() end)
 
 vim.opt.background = 'dark'
 vim.api.nvim_set_var('gruvbox_material_background', 'medium')
@@ -217,6 +214,19 @@ vim.keymap.set('n', ']g', vim.lsp.diagnostic.goto_next)
 vim.keymap.set('n', '[g', vim.lsp.diagnostic.goto_prev)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 
+vim.keymap.set('n', '<leader>ls', function()
+  require('telescope.builtin').lsp_dynamic_workspace_symbols({show_line = false})
+end)
+vim.keymap.set('n', '<leader>lr', function()
+  require('telescope.builtin').lsp_references({show_line = false})
+end)
+vim.keymap.set('n', '<leader>li', function()
+  require('telescope.builtin').lsp_implementations({show_line = false})
+end)
+vim.keymap.set('n', '<leader>lg', function()
+  require('telescope.builtin').diagnostics({show_line = false})
+end)
+
 local cmp = require('cmp')
 cmp.setup({
   snippet = {expand = function(args) vim.fn["vsnip#anonymous"](args.body) end},
@@ -256,3 +266,6 @@ require('lspconfig')['sumneko_lua'].setup({
 })
 
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
+
+vim.cmd('set ff=unix')
+
