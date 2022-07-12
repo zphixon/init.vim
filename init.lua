@@ -73,10 +73,6 @@ vim.keymap.set('t', 'jk', '<C-\\><C-n>')
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('i', 'Jk', '<Esc>')
 vim.keymap.set('i', 'JK', '<Esc>')
-vim.keymap.set('i', 'unrwap', 'unwrap')
-vim.keymap.set('i', 'unrwpa', 'unwrap')
-vim.keymap.set('i', 'unwrpa', 'unwrap')
-vim.keymap.set('i', 'uwnrap', 'unwrap')
 
 vim.api.nvim_set_var('mapleader', ' ')
 vim.api.nvim_set_var('maplocalleader', "'")
@@ -268,4 +264,3 @@ require('lspconfig')['sumneko_lua'].setup({
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
 
 vim.cmd('set ff=unix')
-
