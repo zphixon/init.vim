@@ -94,6 +94,9 @@ vim.keymap.set('n', '<leader>wL', '<C-w>L')
 vim.keymap.set('n', '<leader>w/', command('vsplit'))
 vim.keymap.set('n', '<leader>wd', command('quit'))
 vim.keymap.set('n', '<leader>wn', command('split'))
+vim.keymap.set('n', '<c-tab>', command('tabn'))
+vim.keymap.set('n', '<c-s-tab>', command('tabp'))
+vim.keymap.set('n', '<c-T>', command('tabnew'))
 
 vim.opt.swapfile = false
 
