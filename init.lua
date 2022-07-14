@@ -94,9 +94,16 @@ vim.keymap.set('n', '<leader>wL', '<C-w>L')
 vim.keymap.set('n', '<leader>w/', command('vsplit'))
 vim.keymap.set('n', '<leader>wd', command('quit'))
 vim.keymap.set('n', '<leader>wn', command('split'))
-vim.keymap.set('n', '<c-tab>', command('tabn'))
-vim.keymap.set('n', '<c-s-tab>', command('tabp'))
-vim.keymap.set('n', '<c-T>', command('tabnew'))
+
+if vim.fn.has('win32') == 1 then
+  vim.keymap.set('n', '<c-tab>', command('tabn'))
+  vim.keymap.set('n', '<c-s-tab>', command('tabp'))
+  vim.keymap.set('n', '<c-T>', command('tabnew'))
+else
+  vim.keymap.set('n', '<leader>tn', command('tabn'))
+  vim.keymap.set('n', '<leader>tp', command('tabp'))
+  vim.keymap.set('n', '<leader>tt', command('tabnew'))
+end
 
 vim.opt.swapfile = false
 
