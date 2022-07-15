@@ -36,6 +36,7 @@ require('packer').startup(function()
   use 'qpkorr/vim-bufkill'
   use 'andrejlevkovitch/vim-lua-format'
   use 'tpope/vim-abolish'
+  use 'editorconfig/editorconfig-vim'
 
   -- ui
   use 'tpope/vim-fugitive'
