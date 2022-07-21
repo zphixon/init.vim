@@ -275,3 +275,9 @@ require('lspconfig')['sumneko_lua'].setup({
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
 
 vim.cmd('set ff=unix')
+vim.cmd('augroup small_indent_pls')
+vim.cmd('au!')
+vim.cmd('au FileType glsl set et sw=2 ts=2')
+vim.cmd('au FileType lua set et sw=2 ts=2')
+vim.cmd('au BufEnter *.pc set et sw=2 ts=2')
+vim.cmd('augroup END')
