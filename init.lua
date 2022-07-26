@@ -28,6 +28,7 @@ require('packer').startup(function()
   -- use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'chrisbra/Colorizer'
   use {'mlochbaum/BQN', rtp = 'editors/vim'}
+  use 'DingDean/wgsl.vim'
 
   -- enhancements
   use 'justinmk/vim-sneak'
