@@ -218,8 +218,8 @@ vim.keymap.set('n', '<c-k>', vim.lsp.buf.signature_help)
 vim.keymap.set('n', 'gr', vim.lsp.buf.references)
 vim.keymap.set('n', 'g0', vim.lsp.buf.document_symbol)
 vim.keymap.set('n', 'gW', vim.lsp.buf.workspace_symbol)
-vim.keymap.set('n', ']g', vim.lsp.diagnostic.goto_next)
-vim.keymap.set('n', '[g', vim.lsp.diagnostic.goto_prev)
+vim.keymap.set('n', ']g', vim.diagnostic.goto_next)
+vim.keymap.set('n', '[g', vim.diagnostic.goto_prev)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 
 vim.keymap.set('n', '<leader>ls', function()
@@ -272,6 +272,7 @@ require('lspconfig')['sumneko_lua'].setup({
   },
   capabilities = capabilities,
 })
+require('lspconfig')['wgsl_analyzer'].setup({})
 
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
 
@@ -282,4 +283,5 @@ vim.cmd('au FileType glsl set et sw=2 ts=2')
 vim.cmd('au FileType lua set et sw=2 ts=2')
 vim.cmd('au BufEnter *.pc set et sw=2 ts=2')
 vim.cmd('au FileType markdown set et sw=2 ts=2')
+vim.cmd('au FileType wgsl set et sw=2 ts=2')
 vim.cmd('augroup END')
