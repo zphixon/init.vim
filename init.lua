@@ -38,6 +38,7 @@ require('packer').startup(function()
   use 'andrejlevkovitch/vim-lua-format'
   use 'tpope/vim-abolish'
   use 'editorconfig/editorconfig-vim'
+  use 'protex/better-digraphs.nvim'
 
   -- ui
   use 'tpope/vim-fugitive'
@@ -168,6 +169,9 @@ vim.keymap.set('n', '<leader>ff', function()
   if not ok then require('telescope.builtin').find_files({hidden = true}) end
 end)
 
+vim.keymap.set('i', '<C-k><C-k>',
+               function() require('better-digraphs').digraphs('i') end)
+
 vim.opt.background = 'dark'
 vim.api.nvim_set_var('gruvbox_material_background', 'medium')
 vim.cmd('colorscheme gruvbox-material')
@@ -273,7 +277,6 @@ require('lspconfig')['sumneko_lua'].setup({
   capabilities = capabilities,
 })
 require('lspconfig')['wgsl_analyzer'].setup({})
-
 require('lspconfig')['clangd'].setup({capabilities = capabilities})
 
 vim.cmd('set ff=unix')
