@@ -43,7 +43,7 @@ require('packer').startup(function()
   -- ui
   use 'tpope/vim-fugitive'
   use 'tpope/vim-vinegar'
-  use 'airblade/vim-gitgutter'
+  use 'lewis6991/gitsigns.nvim'
   use {'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim'}
   use 'duane9/nvim-rg'
   use 'lukas-reineke/indent-blankline.nvim'
@@ -173,6 +173,21 @@ vim.api.nvim_set_var('everforest_background', 'hard')
 vim.cmd('colorscheme everforest')
 
 require('indent_blankline').setup({})
+
+require('gitsigns').setup()
+local gs = package.loaded.gitsigns
+
+vim.keymap.set('n', ']c', function()
+  if vim.wo.diff then return ']c' end
+  vim.schedule(function() gs.next_hunk() end)
+  return '<Ignore>'
+end, {expr=true})
+
+vim.keymap.set('n', '[c', function()
+  if vim.wo.diff then return '[c' end
+  vim.schedule(function() gs.prev_hunk() end)
+  return '<Ignore>'
+end, {expr=true})
 
 vim.cmd('autocmd FileType lua nnoremap <buffer> <c-k> :call LuaFormat()')
 vim.cmd('autocmd BufWrite *.lua :call LuaFormat()')
