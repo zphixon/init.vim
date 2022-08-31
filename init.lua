@@ -49,12 +49,8 @@ require('packer').startup(function()
   use 'lukas-reineke/indent-blankline.nvim'
 
   -- colorschemes
-  use 'chriskempson/base16-vim'
-  use 'AlessandroYorba/Alduin'
-  use 'mbbill/desertEx'
-  use 'sainnhe/sonokai'
-  use 'sainnhe/edge'
   use 'sainnhe/gruvbox-material'
+  use 'sainnhe/everforest'
 end)
 
 local function command(cmd) return function() vim.cmd(cmd) end end
@@ -173,8 +169,8 @@ vim.keymap.set('i', '<C-k><C-k>',
                function() require('better-digraphs').digraphs('i') end)
 
 vim.opt.background = 'dark'
-vim.api.nvim_set_var('gruvbox_material_background', 'medium')
-vim.cmd('colorscheme gruvbox-material')
+vim.api.nvim_set_var('everforest_background', 'hard')
+vim.cmd('colorscheme everforest')
 
 require('indent_blankline').setup({})
 
