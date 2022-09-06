@@ -169,8 +169,8 @@ vim.keymap.set('i', '<C-k><C-k>',
                function() require('better-digraphs').digraphs('i') end)
 
 vim.opt.background = 'dark'
-vim.api.nvim_set_var('everforest_background', 'hard')
-vim.cmd('colorscheme everforest')
+vim.api.nvim_set_var('gruvbox_background', 'hard')
+vim.cmd('colorscheme gruvbox-material')
 
 require('indent_blankline').setup({})
 
