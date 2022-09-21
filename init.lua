@@ -25,10 +25,11 @@ require('packer').startup(function()
 
   -- highlighting
   use 'sheerun/vim-polyglot'
-  -- use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'chrisbra/Colorizer'
   use {'mlochbaum/BQN', rtp = 'editors/vim'}
   use 'DingDean/wgsl.vim'
+  use 'ron-rs/ron.vim'
 
   -- enhancements
   use 'justinmk/vim-sneak'
@@ -300,3 +301,5 @@ vim.cmd('au FileType markdown set et sw=2 ts=2')
 vim.cmd('au FileType wgsl set et sw=2 ts=2')
 vim.cmd('au FileType html set et sw=2 ts=2')
 vim.cmd('augroup END')
+
+require('xd').setup()
