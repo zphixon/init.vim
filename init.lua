@@ -274,7 +274,17 @@ local nvim_runtime_sources = vim.api.nvim_get_runtime_file('', true)
 for k, v in ipairs(nvim_runtime_sources) do sources[#sources + k] = v end
 
 require('lspconfig')['pylsp'].setup({capabilities = capabilities})
-require('lspconfig')['rust_analyzer'].setup({capabilities = capabilities})
+require('lspconfig')['rust_analyzer'].setup({
+  capabilities = capabilities,
+  cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+        disabled = { 'inactive-code' }
+      }
+    }
+  }
+})
 require('lspconfig')['zls'].setup({capabilities = capabilities})
 require('lspconfig')['sumneko_lua'].setup({
   cmd = {'lua-language-server'},
