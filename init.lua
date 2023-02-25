@@ -197,7 +197,7 @@ vim.api.nvim_set_var('rustfmt_autosave', 1)
 
 local function vsnip_jump(dir, plugbind, realbind)
   return function()
-    if vim.fn['vsnip#jumpable'](dir) then
+    if 1 == vim.fn['vsnip#jumpable'](dir) then
       return plugbind
     else
       return realbind
@@ -265,9 +265,7 @@ cmp.setup({
                                {{name = 'buffer'}}),
 })
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
-                                                                   .protocol
-                                                                   .make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local sources = {'${3rd}/love2d/library'}
 local nvim_runtime_sources = vim.api.nvim_get_runtime_file('', true)
@@ -286,13 +284,14 @@ require('lspconfig')['rust_analyzer'].setup({
   }
 })
 require('lspconfig')['zls'].setup({capabilities = capabilities})
-require('lspconfig')['sumneko_lua'].setup({
-  cmd = {'lua-language-server'},
+require('lspconfig')['lua_ls'].setup({
   settings = {
     Lua = {
       runtime = {version = 'LuaJIT'},
       diagnostics = {globals = {'vim'}},
-      workspace = {library = {"${3rd}/love2d/library"}, checkThirdParty = false},
+      workspace = {
+        library = vim.api.nvim_get_runtime_file('', true),
+      },
       telemetry = {enable = false},
     },
   },
